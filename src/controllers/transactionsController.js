@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import { db } from "../database/database.connection.js";
-import { transactionSchema } from "../schemas/transactions.schemas.js";
 
 export async function postTransaction (req, res){
     const { authorization } = req.headers;
@@ -9,12 +8,7 @@ export async function postTransaction (req, res){
     if (!token) return res.sendStatus(401);
 
     const dataAtual = dayjs().format('DD/MM');
-    const validation = transactionSchema.validate(req.body, { abortEarly: false })
-
-    if (validation.error) {
-        const errors = validation.error.details.map(detail => detail.message)
-        return res.status(422).send(errors)
-    }
+    
     const {valor, descricao, tipo} = req.body;
     try{
         const user = await db.collection("logados").findOne({token});
