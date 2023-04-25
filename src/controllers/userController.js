@@ -1,17 +1,11 @@
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import { db } from "../database/database.connection.js";
-import { cadastroSchema, loginSchema } from "../schemas/user.schemas.js";
-
+import { loginSchema } from "../schemas/user.schemas.js";
 
 
 export async function postCadastro (req, res) {
     const { name, email, password } = req.body;
-    const validation = cadastroSchema.validate(req.body, { abortEarly: false })
-    if (validation.error) {
-        const errors = validation.error.details.map((detail) => detail.path);
-        return res.status(422).send(errors);
-    }
     const hash = bcrypt.hashSync(password, 10);
     try{
         const verificaSePossuiCadastro = await db.collection("cadastrados").findOne({email})
